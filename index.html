@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surat Khusus</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #ffeef2, #fff7fa);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ENVELOPE */
+.envelope {
+  width: 280px;
+  height: 180px;
+  background: #ffb7c5;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform .3s;
+}
+.envelope:hover { transform: scale(1.03); }
+.envelope span { color: white; font-weight: 600; }
+
+/* MAIN CARD */
+.card {
+  display: none;
+  background: #fffafa;
+  border-radius: 22px;
+  padding: 30px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #cc6f8e;
+  margin-bottom: 22px;
+}
+
+/* BEAR */
+.bear {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 18px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.bear iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+.bear.happy {
+  animation: bounce 1s ease-in-out infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+/* LOVE (LEBIH LAMA 3,5x) */
+.love {
+  position: absolute;
+  bottom: 20px;
+  font-size: 22px;
+  color: #ff6f9f;
+  animation: floatLove 7.7s ease forwards; /* sebelumnya 2.2s */
+  opacity: 0;
+}
+@keyframes floatLove {
+  0%   { transform: translateY(0) scale(.7); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(-140px) scale(1); opacity: 0; }
+}
+
+/* BUTTONS */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+.btn {
+  padding: 12px 26px;
+  border-radius: 30px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  transition: .25s ease;
+}
+.btn-yes {
+  background: linear-gradient(135deg, #ffb7c5, #ff9bb5);
+  color: white;
+  font-weight: 600;
+}
+.btn-no {
+  background: #f3e7ea;
+  color: #666;
+}
+
+/* POPUP */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,220,230,.45);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.popup {
+  background: white;
+  border-radius: 18px;
+  padding: 26px 30px;
+  text-align: center;
+  width: 80%;
+  max-width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  transform: scale(.85);
+  opacity: 0;
+  transition: .25s ease;
+}
+.popup.show {
+  transform: scale(1);
+  opacity: 1;
+}
+.popup h3 {
+  margin: 0;
+  color: #cc6f8e;
+}
+.popup small {
+  display: block;
+  margin-top: 8px;
+  color: #888;
+  font-size: 12px;
+}
+
+/* WATERMARK */
+.watermark {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(0,0,0,.35);
+}
+</style>
+</head>
+
+<body>
+
+<div class="envelope" id="openLetter">
+  <span>Buka (pencet di sini)</span>
+</div>
+
+<div class="card" id="mainCard">
+  <div class="title">mu mau ga, foto bareng pas foto angkatan?</div>
+
+  <div class="bear" id="bear">
+    <iframe id="bearFrame"
+      src="https://tenor.com/embed/3117522263724372729"></iframe>
+  </div>
+
+  <div class="buttons">
+    <button class="btn btn-yes" id="btnYes">Iyaa</button>
+    <button class="btn btn-no" id="btnNo">Tidak</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="popup" id="popup">
+    <h3>makasiii iyaaaaa 🤝😁</h3>
+    <small>screenshot kirim ya</small>
+  </div>
+</div>
+
+<div class="watermark">©sonnicrabs (Instagram)</div>
+
+<audio id="bgMusic" loop>
+  <source src="glue-song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const openLetter = document.getElementById("openLetter");
+const card = document.getElementById("mainCard");
+const bgMusic = document.getElementById("bgMusic");
+const bearFrame = document.getElementById("bearFrame");
+const bear = document.getElementById("bear");
+const btnYes = document.getElementById("btnYes");
+const btnNo = document.getElementById("btnNo");
+const overlay = document.getElementById("overlay");
+const popup = document.getElementById("popup");
+
+const happyBear = "https://tenor.com/embed/3754556696364329203";
+const sadBear   = "https://tenor.com/embed/25351934";
+
+let yesScale = 1;
+
+// OPEN LETTER + MUSIC
+openLetter.onclick = () => {
+  openLetter.style.display = "none";
+  card.style.display = "block";
+
+  bgMusic.volume = 0;
+  bgMusic.play();
+  let vol = 0;
+  const fade = setInterval(() => {
+    if (vol < 0.45) {
+      vol += 0.02;
+      bgMusic.volume = vol;
+    } else clearInterval(fade);
+  }, 120);
+};
+
+// NO (2x lebih cepat membesar)
+btnNo.onclick = () => {
+  bearFrame.src = sadBear;
+  bear.classList.remove("happy");
+  yesScale += 0.16;
+  btnYes.style.transform = `scale(${yesScale})`;
+};
+
+// YES
+btnYes.onclick = () => {
+  bearFrame.src = happyBear;
+  bear.classList.add("happy");
+  spawnLove();
+  overlay.style.display = "flex";
+  setTimeout(() => popup.classList.add("show"), 10);
+};
+
+// LOVE SPAWN (DURASI PANJANG)
+function spawnLove() {
+  for (let i = 0; i < 8; i++) {
+    const love = document.createElement("div");
+    love.className = "love";
+    love.textContent = "💗";
+    love.style.left = 40 + Math.random() * 120 + "px";
+    love.style.animationDelay = i * 0.2 + "s";
+    bear.appendChild(love);
+
+    setTimeout(() => love.remove(), 8000); // disesuaikan
+  }
+}
+
+// CLOSE POPUP
+overlay.onclick = () => {
+  popup.classList.remove("show");
+  setTimeout(() => overlay.style.display = "none", 200);
+};
+</script>
+
+</body>
+</html>
